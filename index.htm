@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kirana Manggala W - Portfolio & CMS Backend</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="importmap">
+{
+  "imports": {
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js",
+    "firebase/analytics": "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js"
+  }
+}
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5.0.3/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5.0.3/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5.0.3/700.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  * { font-family: 'Plus Jakarta Sans', sans-serif; }
+  html { scroll-behavior: smooth; }
+  body { background: #fdf8f5; color: #2d2a26; }
+  .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); }
+  .gradient-bg { background: linear-gradient(135deg, #fde8e0 0%, #f5d5e0 50%, #e8d5f5 100%); }
+  .btn-primary { background: linear-gradient(135deg, #e879a0 0%, #b07cd8 100%); transition: all .3s; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(232,121,160,.35); }
+  .btn-outline { border: 2px solid #e879a0; color: #e879a0; transition: all .3s; }
+  .btn-outline:hover { background: #e879a0; color: white; }
+  .card { transition: all .4s cubic-bezier(.2,.8,.2,1); }
+  .card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(176,124,216,.15); }
+  .fade-in { animation: fadeIn .6s ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(10px);} to { opacity:1; transform: translateY(0);} }
+  .modal-overlay { background: rgba(30,20,40,.55); backdrop-filter: blur(6px); }
+  .tab-active { background: linear-gradient(135deg, #e879a0 0%, #b07cd8 100%); color: white; }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: #e879a0; border-radius: 3px; }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: #e879a0; box-shadow: 0 0 0 3px rgba(232,121,160,.15); }
+  .blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .5; z-index: 0; }
+  .skill-card { transition: all .3s; }
+  .skill-card:hover { transform: translateY(-4px) scale(1.02); }
+  .stat-card { background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%); backdrop-filter: blur(10px); }
+  .shake { animation: shake .4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .proyek-img { width: 100%; height: 100%; object-fit: cover; }
+  .img-preview { width: 100%; height: 140px; object-fit: cover; border-radius: 12px; border: 2px dashed #f9a8c4; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- NAVBAR -->
+<nav class="fixed top-0 left-0 right-0 z-40 glass border-b border-white/40">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-2 font-bold text-lg">
+      <span class="w-9 h-9 rounded-xl btn-primary flex items-center justify-center text-white text-sm">K</span>
+      <span>Kirana<span class="text-pink-400">.design</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-7 text-sm font-medium">
+      <a href="#stats" class="hover:text-pink-400 transition">Stats</a>
+      <a href="#proyek" class="hover:text-pink-400 transition">Proyek</a>
+      <a href="#skills" class="hover:text-pink-400 transition">Skills</a>
+      <a href="#hobi" class="hover:text-pink-400 transition">Hobi</a>
+      <a href="#kontak" class="hover:text-pink-400 transition">Kontak</a>
+    </div>
+    <button id="btnLogin" class="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-pink-200 text-sm font-medium hover:shadow-md transition">
+      <i class="fa-solid fa-user-shield text-pink-400"></i>
+      <span class="hidden sm:inline">Login Admin</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="relative pt-28 pb-20 px-4 sm:px-6 overflow-hidden">
+  <div class="blob w-72 h-72 bg-pink-300 top-10 -left-20"></div>
+  <div class="blob w-80 h-80 bg-purple-300 bottom-0 -right-20"></div>
+  <div class="max-w-6xl mx-auto relative z-10 grid md:grid-cols-2 gap-10 items-center">
+    <div class="fade-in">
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/70 text-xs font-medium text-pink-500 border border-pink-200 mb-5">
+        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+        Available for Freelance
+      </span>
+      <h1 id="heroNama" class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4">
+        Kirana <span class="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">Manggala W</span>
+      </h1>
+      <p id="heroBio" class="text-base sm:text-lg text-gray-600 mb-7 leading-relaxed">
+        UI/UX & Mobile-First Designer berfokus menciptakan antarmuka yang estetis, lembut, dan intuitif untuk semua pengguna.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="#kontak" class="btn-primary px-6 py-3 rounded-full text-white font-medium text-sm inline-flex items-center gap-2">
+          <i class="fa-solid fa-paper-plane"></i> Hubungi Saya
+        </a>
+        <a href="#proyek" class="btn-outline px-6 py-3 rounded-full font-medium text-sm inline-flex items-center gap-2">
+          <i class="fa-solid fa-briefcase"></i> Lihat Karya
+        </a>
+      </div>
+    </div>
+    <div class="flex justify-center fade-in">
+      <div class="relative">
+        <div class="w-64 h-64 sm:w-80 sm:h-80 rounded-full overflow-hidden border-4 border-white shadow-2xl bg-pink-100">
+          <img id="heroFoto" src="https://i.pinimg.com/736x/02/5a/87/025a879a87530f1da992840f84c3929e.jpg" alt="Kirana" class="w-full h-full object-cover">
+        </div>
+        <div class="absolute -bottom-3 -right-3 bg-white rounded-2xl shadow-lg px-4 py-2 border border-pink-100">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-palette text-pink-400"></i>
+            <div class="text-xs">
+              <div class="font-bold">5+ Tahun</div>
+              <div class="text-gray-500">Experience</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS CARDS -->
+<section id="stats" class="py-12 px-4 sm:px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="stat-card card rounded-2xl p-6 border border-pink-100 text-center">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-pink-200 to-pink-300 flex items-center justify-center mb-3">
+          <i class="fa-solid fa-briefcase text-pink-600 text-xl"></i>
+        </div>
+        <div class="text-3xl font-bold text-gray-800 mb-1">50+</div>
+        <div class="text-sm text-gray-600">Proyek Selesai</div>
+      </div>
+      <div class="stat-card card rounded-2xl p-6 border border-pink-100 text-center">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-purple-200 to-purple-300 flex items-center justify-center mb-3">
+          <i class="fa-solid fa-users text-purple-600 text-xl"></i>
+        </div>
+        <div class="text-3xl font-bold text-gray-800 mb-1">30+</div>
+        <div class="text-sm text-gray-600">Klien Puas</div>
+      </div>
+      <div class="stat-card card rounded-2xl p-6 border border-pink-100 text-center">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-amber-200 to-amber-300 flex items-center justify-center mb-3">
+          <i class="fa-solid fa-award text-amber-600 text-xl"></i>
+        </div>
+        <div class="text-3xl font-bold text-gray-800 mb-1">12</div>
+        <div class="text-sm text-gray-600">Penghargaan</div>
+      </div>
+      <div class="stat-card card rounded-2xl p-6 border border-pink-100 text-center">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-emerald-200 to-emerald-300 flex items-center justify-center mb-3">
+          <i class="fa-solid fa-mug-hot text-emerald-600 text-xl"></i>
+        </div>
+        <div class="text-3xl font-bold text-gray-800 mb-1">999+</div>
+        <div class="text-sm text-gray-600">Cangkir Kopi</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROYEK -->
+<section id="proyek" class="py-16 px-4 sm:px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-10">
+      <span class="text-pink-400 font-semibold text-sm uppercase tracking-wider">Portfolio</span>
+      <h2 class="text-3xl sm:text-4xl font-bold mt-2">Portofolio Proyek</h2>
+      <p class="text-gray-600 mt-3 max-w-xl mx-auto">Beberapa hasil karya perancangan antarmuka dan aplikasi terkini.</p>
+    </div>
+    <div id="proyekGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </div>
+</section>
+
+<!-- SKILLS CARDS -->
+<section id="skills" class="py-16 px-4 sm:px-6 gradient-bg">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-10">
+      <span class="text-pink-500 font-semibold text-sm uppercase tracking-wider">Expertise</span>
+      <h2 class="text-3xl sm:text-4xl font-bold mt-2">Skills & Tools</h2>
+      <p class="text-gray-700 mt-3 max-w-xl mx-auto">Teknologi dan tools yang saya kuasai untuk menciptakan desain terbaik.</p>
+    </div>
+    <div id="skillsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+  </div>
+</section>
+
+<!-- HOBI -->
+<section id="hobi" class="py-16 px-4 sm:px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-10">
+      <span class="text-pink-500 font-semibold text-sm uppercase tracking-wider">Lifestyle</span>
+      <h2 class="text-3xl sm:text-4xl font-bold mt-2">Hobi & Minat</h2>
+      <p class="text-gray-700 mt-3 max-w-xl mx-auto">Aktivitas favorit untuk menjaga kebugaran, kreativitas, dan keseimbangan diri.</p>
+    </div>
+    <div id="hobiGrid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL CARDS -->
+<section class="py-16 px-4 sm:px-6 gradient-bg">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-10">
+      <span class="text-pink-500 font-semibold text-sm uppercase tracking-wider">Testimonials</span>
+      <h2 class="text-3xl sm:text-4xl font-bold mt-2">Apa Kata Mereka</h2>
+      <p class="text-gray-700 mt-3 max-w-xl mx-auto">Feedback dari klien dan kolaborator yang pernah bekerja sama.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="card bg-white rounded-2xl p-6 border border-pink-100">
+        <div class="flex items-center gap-1 mb-3">
+          <i class="fa-solid fa-star text-amber-400"></i><i class="fa-solid fa-star text-amber-400"></i><i class="fa-solid fa-star text-amber-400"></i><i class="fa-solid fa-star text-amber-400"></i><i class="fa-solid fa-star text-amber-400"></i>
+        </div>
+        <p class="text-sm text-gray-700 mb-4 italic">"Kirana sangat detail dan memahami kebutuhan user dengan baik. Hasil desainnya selalu melebihi ekspektasi!"</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-300 to-purple-300 flex items-center justify-center text-white font-bold">A</div>
+          <div><div class="font-semibold text-sm">Andi Pratama</div><div class="text-xs text-gray-500">Product Manager, TechCo</div></div>
+        </div>
+      </div>
+      <div class="card bg-white rounded-2xl p-6 border border-pink-100">
+        <div class="flex items-center gap-1 mb-3">
+          <i class="fa-solid fa-star text-amber-400"></i><i class="fa-solid fa-star text-amber-400"></i><i class="fa-solid fa-star text-amber-400"></i><i class="fa-solid fa-star text-amber-400"></i><i class="fa-solid fa-star text-amber-400"></i>
+        </div>
+        <p class="text-sm text-gray-700 mb-4 italic">"Kolaborasi yang menyenangkan! Desainnya modern, clean, dan sangat user-friendly. Highly recommended!"</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-300 to-pink-300 flex items-center justify-center text-white font-bold">S</div>
+          <div><div class="font-semibold text-sm">Sari Dewi</div><div class="text-xs text-gray-500">CEO, StartupXYZ</div></div>
+        </div>
+      </div>
+      <div class="card bg-white rounded-2xl p-6 border border-pink-100">
+        <div class="flex items-center gap-1 mb-3">
+          <i class="fa-solid fa-star text-amber-400"></i><i class="fa-solid fa-star text-amber-400"></i><i class="fa-solid fa-star text-amber-400"></i><i class="fa-solid fa-star text-amber-400"></i><i class="fa-solid fa-star text-amber-400"></i>
+        </div>
+        <p class="text-sm text-gray-700 mb-4 italic">"Profesional, responsif, dan kreatif. Aplikasi yang didesain Kirana mendapat rating tinggi dari pengguna kami."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-300 to-pink-300 flex items-center justify-center text-white font-bold">R</div>
+          <div><div class="font-semibold text-sm">Rizky Hakim</div><div class="text-xs text-gray-500">CTO, AppVenture</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAK -->
+<section id="kontak" class="py-16 px-4 sm:px-6">
+  <div class="max-w-3xl mx-auto">
+    <div class="text-center mb-10">
+      <span class="text-pink-400 font-semibold text-sm uppercase tracking-wider">Get in Touch</span>
+      <h2 class="text-3xl sm:text-4xl font-bold mt-2">Mari Berkolaborasi!</h2>
+      <p class="text-gray-600 mt-3">Tertarik untuk berdiskusi tentang proyek atau ide baru?</p>
+    </div>
+    <form id="kontakForm" class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-pink-100">
+      <div class="grid sm:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="text-sm font-medium text-gray-700 mb-1 block">Nama Lengkap</label>
+          <input type="text" id="kNama" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm" placeholder="Nama Anda">
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700 mb-1 block">Email</label>
+          <input type="email" id="kEmail" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm" placeholder="email@domain.com">
+        </div>
+      </div>
+      <div class="mb-5">
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Pesan</label>
+        <textarea id="kPesan" required rows="5" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm resize-none" placeholder="Ceritakan ide Anda..."></textarea>
+      </div>
+      <button type="submit" class="w-full btn-primary py-3 rounded-xl text-white font-semibold inline-flex items-center justify-center gap-2">
+        <i class="fa-solid fa-paper-plane"></i> Kirim Pesan
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="py-8 px-4 sm:px-6 border-t border-pink-100 bg-white/50">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-600">
+    <p>© 2026 Kirana Manggala W. Designed with Mobile-First Principles & CMS Powered.</p>
+    <div class="flex gap-3">
+      <a href="#" class="w-9 h-9 rounded-full bg-white border border-pink-200 flex items-center justify-center hover:bg-pink-50 transition"><i class="fa-brands fa-instagram text-pink-400"></i></a>
+      <a href="#" class="w-9 h-9 rounded-full bg-white border border-pink-200 flex items-center justify-center hover:bg-pink-50 transition"><i class="fa-brands fa-linkedin text-pink-400"></i></a>
+      <a href="#" class="w-9 h-9 rounded-full bg-white border border-pink-200 flex items-center justify-center hover:bg-pink-50 transition"><i class="fa-brands fa-dribbble text-pink-400"></i></a>
+      <a href="#" class="w-9 h-9 rounded-full bg-white border border-pink-200 flex items-center justify-center hover:bg-pink-50 transition"><i class="fa-brands fa-github text-pink-400"></i></a>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL LOGIN -->
+<div id="loginModal" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay p-4">
+  <div class="bg-white rounded-3xl max-w-md w-full p-7 shadow-2xl fade-in">
+    <div class="text-center mb-6">
+      <div class="w-14 h-14 mx-auto rounded-2xl btn-primary flex items-center justify-center text-white text-xl mb-3">
+        <i class="fa-solid fa-lock"></i>
+      </div>
+      <h3 class="text-xl font-bold">Login Admin CMS</h3>
+      <p class="text-sm text-gray-500 mt-1">Masukkan kredensial admin untuk mengelola portofolio.</p>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="text-xs font-medium text-gray-600 mb-1 block">Username</label>
+        <input type="text" id="lUser" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm" placeholder="Masukkan username">
+      </div>
+      <div>
+        <label class="text-xs font-medium text-gray-600 mb-1 block">Password</label>
+        <div class="relative">
+          <input type="password" id="lPass" class="w-full px-4 py-3 pr-11 rounded-xl border border-gray-200 text-sm" placeholder="Masukkan password">
+          <button type="button" id="togglePass" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-pink-400">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      <div id="loginErr" class="hidden text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg border border-red-200">
+        <i class="fa-solid fa-circle-exclamation mr-1"></i> <span id="loginErrMsg">Username atau Password salah!</span>
+      </div>
+      <div id="loginSuccess" class="hidden text-xs text-green-600 bg-green-50 px-3 py-2 rounded-lg border border-green-200">
+        <i class="fa-solid fa-circle-check mr-1"></i> Login berhasil! Membuka dashboard...
+      </div>
+      <button id="btnSubmitLogin" class="w-full btn-primary py-3 rounded-xl text-white font-semibold">
+        <i class="fa-solid fa-right-to-bracket mr-1"></i> Masuk ke Dashboard
+      </button>
+      <button id="btnCancelLogin" class="w-full py-2 text-sm text-gray-500 hover:text-gray-700">Batal</button>
+    </div>
+    <div class="mt-4 p-3 bg-pink-50 border border-pink-100 rounded-xl">
+      <p class="text-xs text-pink-600 text-center">
+        <i class="fa-solid fa-circle-info mr-1"></i>
+        <strong>Credentials:</strong> kmw / kmw0108
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="fixed inset-0 z-50 hidden bg-[#fdf8f5] overflow-y-auto scrollbar-thin">
+  <div class="max-w-6xl mx-auto p-4 sm:p-6">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-2xl font-bold">Dashboard CMS Admin</h2>
+        <p class="text-sm text-gray-500">Kelola Proyek, Skills, Hobi, Info Profil & Pesan Masuk</p>
+      </div>
+      <button id="btnCloseDashboard" class="px-4 py-2 rounded-full bg-white border border-pink-200 text-sm font-medium hover:shadow-md transition">
+        <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i> Keluar
+      </button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex flex-wrap gap-2 mb-6 bg-white p-2 rounded-2xl shadow-sm border border-pink-100">
+      <button onclick="switchTab('proyek')" data-tab="proyek" class="tab-btn tab-active flex-1 min-w-[100px] px-3 py-2.5 rounded-xl text-sm font-medium transition">
+        <i class="fa-solid fa-briefcase mr-1"></i> Proyek (<span id="cntProyek">0</span>)
+      </button>
+      <button onclick="switchTab('skills')" data-tab="skills" class="tab-btn flex-1 min-w-[100px] px-3 py-2.5 rounded-xl text-sm font-medium transition">
+        <i class="fa-solid fa-code mr-1"></i> Skills (<span id="cntSkills">0</span>)
+      </button>
+      <button onclick="switchTab('hobi')" data-tab="hobi" class="tab-btn flex-1 min-w-[100px] px-3 py-2.5 rounded-xl text-sm font-medium transition">
+        <i class="fa-solid fa-heart mr-1"></i> Hobi (<span id="cntHobi">0</span>)
+      </button>
+      <button onclick="switchTab('profil')" data-tab="profil" class="tab-btn flex-1 min-w-[100px] px-3 py-2.5 rounded-xl text-sm font-medium transition">
+        <i class="fa-solid fa-user mr-1"></i> Profil
+      </button>
+      <button onclick="switchTab('pesan')" data-tab="pesan" class="tab-btn flex-1 min-w-[100px] px-3 py-2.5 rounded-xl text-sm font-medium transition">
+        <i class="fa-solid fa-envelope mr-1"></i> Pesan (<span id="cntPesan">0</span>)
+      </button>
+    </div>
+
+    <!-- Tab: Proyek -->
+    <div id="tab-proyek" class="tab-content">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg">Daftar Kartu Proyek</h3>
+        <button onclick="openProyekModal()" class="btn-primary px-4 py-2 rounded-xl text-white text-sm font-medium">
+          <i class="fa-solid fa-plus mr-1"></i> Tambah Proyek
+        </button>
+      </div>
+      <div id="adminProyekGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+
+    <!-- Tab: Skills -->
+    <div id="tab-skills" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg">Daftar Skills & Tools</h3>
+        <button onclick="openSkillsModal()" class="btn-primary px-4 py-2 rounded-xl text-white text-sm font-medium">
+          <i class="fa-solid fa-plus mr-1"></i> Tambah Skill
+        </button>
+      </div>
+      <div id="adminSkillsGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+
+    <!-- Tab: Hobi -->
+    <div id="tab-hobi" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg">Daftar Kartu Hobi</h3>
+        <button onclick="openHobiModal()" class="btn-primary px-4 py-2 rounded-xl text-white text-sm font-medium">
+          <i class="fa-solid fa-plus mr-1"></i> Tambah Hobi
+        </button>
+      </div>
+      <div id="adminHobiGrid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+    </div>
+
+    <!-- Tab: Profil -->
+    <div id="tab-profil" class="tab-content hidden">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-pink-100">
+        <h3 class="font-bold text-lg mb-4">Informasi Profil</h3>
+        
+        <div class="mb-5">
+          <label class="text-sm font-medium text-gray-700 mb-2 block">Foto Profil</label>
+          <div class="flex items-start gap-4">
+            <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-pink-100 flex-shrink-0 bg-gray-100">
+              <img id="previewFoto" src="" alt="Preview" class="w-full h-full object-cover">
+            </div>
+            <div class="flex-1 space-y-2">
+              <div>
+                <label class="text-xs font-medium text-gray-600 mb-1 block">URL Gambar (paste link dari internet)</label>
+                <div class="flex gap-2">
+                  <input type="text" id="pFotoUrl" placeholder="https://contoh.com/foto.jpg" class="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-xs">
+                  <button type="button" onclick="applyFotoUrl()" class="px-3 py-2 rounded-lg bg-pink-50 text-pink-600 text-xs font-medium hover:bg-pink-100 whitespace-nowrap">
+                    <i class="fa-solid fa-link mr-1"></i>Terapkan
+                  </button>
+                </div>
+                <p class="text-xs text-gray-400 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>Paste link gambar dari Google, Imgur, Pinterest, dll.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="text-sm font-medium text-gray-700 mb-1 block">Nama Lengkap</label>
+            <input type="text" id="pNama" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm">
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-700 mb-1 block">Jabatan / Role</label>
+            <input type="text" id="pRole" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="UI/UX Designer">
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="text-sm font-medium text-gray-700 mb-1 block">Bio / Deskripsi Singkat</label>
+          <textarea id="pBio" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm resize-none"></textarea>
+        </div>
+        <h4 class="font-semibold text-sm mb-2 text-gray-700">Link Media Sosial</h4>
+        <div class="grid sm:grid-cols-2 gap-4 mb-5">
+          <div>
+            <label class="text-xs font-medium text-gray-600 mb-1 block"><i class="fa-brands fa-instagram text-pink-400 mr-1"></i>Instagram</label>
+            <input type="text" id="pIg" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="https://instagram.com/...">
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-600 mb-1 block"><i class="fa-brands fa-linkedin text-pink-400 mr-1"></i>LinkedIn</label>
+            <input type="text" id="pLi" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="https://linkedin.com/in/...">
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-600 mb-1 block"><i class="fa-brands fa-dribbble text-pink-400 mr-1"></i>Dribbble</label>
+            <input type="text" id="pDr" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="https://dribbble.com/...">
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-600 mb-1 block"><i class="fa-brands fa-github text-pink-400 mr-1"></i>GitHub</label>
+            <input type="text" id="pGh" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="https://github.com/...">
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="saveProfil()" class="btn-primary px-5 py-2.5 rounded-xl text-white text-sm font-medium">
+            <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Profil
+          </button>
+          <button onclick="resetDefault()" class="px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">
+            <i class="fa-solid fa-rotate-left mr-1"></i> Reset Data
+          </button>
+        </div>
+      </div>
+      <div class="mt-4 bg-green-50 border border-green-200 rounded-2xl p-4 flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-green-500 text-xl"></i>
+        <div>
+          <div class="text-sm font-semibold text-green-700">Status Backend: Online</div>
+          <div id="backendStatusText" class="text-xs text-green-600">Penyimpanan Cloud Firestore Aktif</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Pesan -->
+    <div id="tab-pesan" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg">Kotak Masuk</h3>
+        <button onclick="clearAllPesan()" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-500 text-xs font-medium hover:bg-red-100 transition">
+          <i class="fa-solid fa-trash mr-1"></i> Hapus Semua
+        </button>
+      </div>
+      <div id="pesanList" class="space-y-3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PROYEK -->
+<div id="proyekModal" class="fixed inset-0 z-[60] hidden items-center justify-center modal-overlay p-4">
+  <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl fade-in max-h-[90vh] overflow-y-auto scrollbar-thin">
+    <h3 class="text-xl font-bold mb-4"><i class="fa-solid fa-briefcase text-pink-400 mr-2"></i><span id="proyekModalTitle">Tambah Proyek</span></h3>
+    <div class="space-y-3">
+      <input type="hidden" id="prId">
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Judul Proyek <span class="text-red-400">*</span></label>
+        <input type="text" id="prJudul" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="Nama proyek">
+      </div>
+      
+      <!-- Gambar URL -->
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">
+          <i class="fa-solid fa-image text-pink-400 mr-1"></i> Gambar Proyek (URL)
+        </label>
+        <div class="flex gap-2 mb-2">
+          <input type="text" id="prGambar" class="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="https://contoh.com/gambar.jpg">
+          <button type="button" onclick="previewProyekImg()" class="px-3 py-2.5 rounded-xl bg-pink-50 text-pink-600 text-sm font-medium hover:bg-pink-100 whitespace-nowrap">
+            <i class="fa-solid fa-eye mr-1"></i>Preview
+          </button>
+        </div>
+        <div id="prGambarPreview" class="hidden mb-2">
+          <img id="prGambarImg" src="" alt="Preview" class="img-preview">
+          <button type="button" onclick="clearProyekImg()" class="mt-2 text-xs text-red-500 hover:underline">
+            <i class="fa-solid fa-xmark mr-1"></i>Hapus gambar
+          </button>
+        </div>
+        <p class="text-xs text-gray-400"><i class="fa-solid fa-circle-info mr-1"></i>Opsional. Jika kosong, akan pakai emoji sebagai ikon.</p>
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Ikon Emoji (jika tidak ada gambar)</label>
+        <input type="text" id="prIkon" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="🎨">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Tag (Pisahkan dengan koma) <span class="text-red-400">*</span></label>
+        <input type="text" id="prTag" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="UI/UX, Mobile">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Deskripsi Ringkas <span class="text-red-400">*</span></label>
+        <textarea id="prDesc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm resize-none"></textarea>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Link Target (URL)</label>
+        <input type="text" id="prLink" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="https://...">
+      </div>
+      <div id="prFormErr" class="hidden text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg border border-red-200">
+        <i class="fa-solid fa-circle-exclamation mr-1"></i> Mohon lengkapi field yang wajib diisi.
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button type="button" onclick="closeProyekModal()" class="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Batal</button>
+        <button type="button" onclick="saveProyek()" class="flex-1 btn-primary py-2.5 rounded-xl text-white text-sm font-medium">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SKILLS -->
+<div id="skillsModal" class="fixed inset-0 z-[60] hidden items-center justify-center modal-overlay p-4">
+  <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl fade-in">
+    <h3 class="text-xl font-bold mb-4"><i class="fa-solid fa-code text-pink-400 mr-2"></i><span id="skillsModalTitle">Tambah Skill</span></h3>
+    <div class="space-y-3">
+      <input type="hidden" id="skId">
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Nama Skill / Tool</label>
+        <input type="text" id="skNama" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="Figma">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Ikon (Emoji atau Font Awesome class)</label>
+        <input type="text" id="skIkon" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="🎨 atau fa-brands fa-figma">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Kategori</label>
+        <select id="skKategori" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm">
+          <option value="Design">Design</option>
+          <option value="Development">Development</option>
+          <option value="Tools">Tools</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Level Keahlian (%)</label>
+        <input type="number" id="skLevel" min="0" max="100" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="90">
+      </div>
+      <div id="skFormErr" class="hidden text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg border border-red-200">
+        <i class="fa-solid fa-circle-exclamation mr-1"></i> Mohon lengkapi semua field.
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button type="button" onclick="closeSkillsModal()" class="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Batal</button>
+        <button type="button" onclick="saveSkills()" class="flex-1 btn-primary py-2.5 rounded-xl text-white text-sm font-medium">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HOBI -->
+<div id="hobiModal" class="fixed inset-0 z-[60] hidden items-center justify-center modal-overlay p-4">
+  <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl fade-in">
+    <h3 class="text-xl font-bold mb-4"><i class="fa-solid fa-heart text-pink-400 mr-2"></i><span id="hobiModalTitle">Tambah Hobi</span></h3>
+    <div class="space-y-3">
+      <input type="hidden" id="hbId">
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Ikon Emoji</label>
+        <input type="text" id="hbIkon" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="🧘">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Nama Hobi</label>
+        <input type="text" id="hbNama" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Deskripsi Hobi</label>
+        <textarea id="hbDesc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm resize-none"></textarea>
+      </div>
+      <div id="hbFormErr" class="hidden text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg border border-red-200">
+        <i class="fa-solid fa-circle-exclamation mr-1"></i> Mohon lengkapi semua field.
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button type="button" onclick="closeHobiModal()" class="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Batal</button>
+        <button type="button" onclick="saveHobi()" class="flex-1 btn-primary py-2.5 rounded-xl text-white text-sm font-medium">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETAIL PESAN -->
+<div id="pesanModal" class="fixed inset-0 z-[60] hidden items-center justify-center modal-overlay p-4">
+  <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl fade-in max-h-[90vh] overflow-y-auto scrollbar-thin">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-bold"><i class="fa-solid fa-envelope-open-text text-pink-400 mr-2"></i>Detail Pesan</h3>
+      <button onclick="closePesanModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="pesanDetail"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed bottom-6 right-6 z-[70] hidden bg-white border border-green-200 shadow-xl rounded-2xl px-5 py-3 flex items-center gap-3 fade-in">
+  <i id="toastIcon" class="fa-solid fa-circle-check text-green-500 text-xl"></i>
+  <span id="toastMsg" class="text-sm font-medium">Berhasil!</span>
+</div>
+
+<script>
+// ===== DEFAULT DATA =====
+const DEFAULT_DATA = {
+  profil: {
+    nama: 'Kirana Manggala W',
+    role: 'UI/UX & Mobile-First Designer',
+    foto: 'https://i.pinimg.com/736x/02/5a/87/025a879a87530f1da992840f84c3929e.jpg',
+    bio: 'UI/UX & Mobile-First Designer berfokus menciptakan antarmuka yang estetis, lembut, dan intuitif untuk semua pengguna.',
+    ig: '', li: '', dr: '', gh: ''
+  },
+  proyek: [
+    { id: 1, judul: 'Wellness App Redesign', gambar: '', ikon: '🧘', tag: 'UI/UX, Mobile', desc: 'Redesign aplikasi meditasi dengan pendekatan mobile-first dan tone warna pastel yang menenangkan.', link: '#' },
+    { id: 2, judul: 'E-Commerce Fashion', gambar: '', ikon: '👗', tag: 'Web, E-commerce', desc: 'Desain storefront fashion dengan fokus pada pengalaman browsing yang smooth dan visual-driven.', link: '#' },
+    { id: 3, judul: 'Finance Dashboard', gambar: '', ikon: '💳', tag: 'Dashboard, Fintech', desc: 'Dashboard keuangan personal dengan visualisasi data yang bersih dan mudah dipahami.', link: '#' },
+    { id: 4, judul: 'Food Delivery UI', gambar: '', ikon: '🍜', tag: 'Mobile, App', desc: 'Konsep aplikasi pesan antar makanan dengan micro-interaction yang playful.', link: '#' },
+    { id: 5, judul: 'Travel Booking', gambar: '', ikon: '✈️', tag: 'Web, Booking', desc: 'Platform pemesanan tiket perjalanan dengan flow yang intuitif dan informatif.', link: '#' },
+    { id: 6, judul: 'Music Streaming', gambar: '', ikon: '🎵', tag: 'Mobile, UI', desc: 'Konsep aplikasi streaming musik dengan dark mode elegan dan navigasi gestural.', link: '#' }
+  ],
+  skills: [
+    { id: 1, nama: 'Figma', ikon: 'fa-brands fa-figma', kategori: 'Design', level: 95 },
+    { id: 2, nama: 'Adobe XD', ikon: 'fa-solid fa-pen-ruler', kategori: 'Design', level: 88 },
+    { id: 3, nama: 'Photoshop', ikon: 'fa-solid fa-image', kategori: 'Design', level: 85 },
+    { id: 4, nama: 'Illustrator', ikon: 'fa-solid fa-bezier-curve', kategori: 'Design', level: 80 },
+    { id: 5, nama: 'HTML/CSS', ikon: 'fa-brands fa-html5', kategori: 'Development', level: 90 },
+    { id: 6, nama: 'JavaScript', ikon: 'fa-brands fa-js', kategori: 'Development', level: 75 },
+    { id: 7, nama: 'React', ikon: 'fa-brands fa-react', kategori: 'Development', level: 70 },
+    { id: 8, nama: 'Tailwind CSS', ikon: 'fa-solid fa-wind', kategori: 'Development', level: 85 }
+  ],
+  hobi: [
+    { id: 1, ikon: '📸', nama: 'Fotografi', desc: 'Mengabadikan momen estetik dengan tone warna lembut.' },
+    { id: 2, ikon: '🧘', nama: 'Yoga', desc: 'Menjaga keseimbangan tubuh dan pikiran setiap pagi.' },
+    { id: 3, ikon: '🎨', nama: 'Ilustrasi Digital', desc: 'Mengeksplorasi karakter dan warna melalui Procreate.' },
+    { id: 4, ikon: '☕', nama: 'Coffee Hunting', desc: 'Menemukan kafe cozy dengan interior yang menginspirasi.' }
+  ],
+  pesan: []
+};
+
+// ===== ADMIN CREDENTIALS =====
+const ADMIN_USER = 'kmw';
+const ADMIN_PASS = 'kmw0108';
+
+// ===== STATE =====
+let data = loadData();
+let isAdmin = false;
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem('kiranaCMS_v3');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Migration: pastikan field baru ada
+      if (!parsed.proyek) parsed.proyek = DEFAULT_DATA.proyek;
+      parsed.proyek = parsed.proyek.map(p => ({ gambar: '', ...p }));
+      return parsed;
+    }
+  } catch(e) { console.error('Load error:', e); }
+  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+}
+function saveData() {
+  try {
+    localStorage.setItem('kiranaCMS_v3', JSON.stringify(data));
+  } catch(e) {
+    toast('Penyimpanan penuh!', 'error');
+  }
+}
+
+// ===== RENDER PUBLIC =====
+function renderPublic() {
+  document.getElementById('heroBio').textContent = data.profil.bio;
+  const fotoEl = document.getElementById('heroFoto');
+  if (data.profil.foto) fotoEl.src = data.profil.foto;
+}
+
+function renderProyek() {
+  const grid = document.getElementById('proyekGrid');
+  const adminGrid = document.getElementById('adminProyekGrid');
+  document.getElementById('cntProyek').textContent = data.proyek.length;
+  
+  const colors = ['from-pink-100 to-rose-100','from-purple-100 to-pink-100','from-amber-100 to-pink-100','from-sky-100 to-purple-100','from-emerald-100 to-sky-100','from-rose-100 to-amber-100','from-indigo-100 to-pink-100','from-teal-100 to-emerald-100'];
+  
+  const headerHTML = (p, i, h=32) => {
+    if (p.gambar) {
+      return `<img src="${p.gambar}" alt="${p.judul}" class="w-full h-${h} object-cover" onerror="this.outerHTML='<div class=\\'h-${h} bg-gradient-to-br ${colors[i%colors.length]} flex items-center justify-center text-5xl\\'>${p.ikon || '📁'}</div>'">`;
+    }
+    return `<div class="h-${h} bg-gradient-to-br ${colors[i%colors.length]} flex items-center justify-center text-5xl">${p.ikon || '📁'}</div>`;
+  };
+  
+  grid.innerHTML = data.proyek.length ? data.proyek.map((p,i) => `
+    <a href="${p.link || '#'}" class="card bg-white rounded-2xl overflow-hidden border border-pink-100 block">
+      ${headerHTML(p, i)}
+      <div class="p-5">
+        <h4 class="font-bold mb-1">${p.judul}</h4>
+        <p class="text-sm text-gray-600 mb-3 line-clamp-2">${p.desc}</p>
+        <div class="flex flex-wrap gap-1.5">
+          ${p.tag.split(',').map(t => `<span class="text-xs px-2 py-1 rounded-full bg-pink-50 text-pink-500 font-medium">${t.trim()}</span>`).join('')}
+        </div>
+      </div>
+    </a>
+  `).join('') : '<p class="text-gray-500 text-sm col-span-full text-center py-8">Belum ada proyek.</p>';
+
+  if (adminGrid) {
+    adminGrid.innerHTML = data.proyek.length ? data.proyek.map((p,i) => `
+      <div class="bg-white rounded-2xl overflow-hidden border border-pink-100">
+        ${headerHTML(p, i, 24)}
+        <div class="p-4">
+          <h4 class="font-bold text-sm mb-1 truncate">${p.judul}</h4>
+          <p class="text-xs text-gray-600 mb-2 line-clamp-2">${p.desc}</p>
+          ${p.gambar ? `<p class="text-xs text-green-600 mb-2 truncate"><i class="fa-solid fa-image mr-1"></i>Ada gambar</p>` : `<p class="text-xs text-gray-400 mb-2"><i class="fa-regular fa-image mr-1"></i>Pakai emoji</p>`}
+          <div class="flex gap-2">
+            <button onclick="editProyek(${p.id})" class="flex-1 py-1.5 rounded-lg bg-pink-50 text-pink-500 text-xs font-medium hover:bg-pink-100 transition"><i class="fa-solid fa-pen mr-1"></i>Edit</button>
+            <button onclick="deleteProyek(${p.id})" class="flex-1 py-1.5 rounded-lg bg-red-50 text-red-500 text-xs font-medium hover:bg-red-100 transition"><i class="fa-solid fa-trash mr-1"></i>Hapus</button>
+          </div>
+        </div>
+      </div>
+    `).join('') : '<p class="text-gray-500 text-sm col-span-full text-center py-8">Belum ada proyek. Klik tombol "Tambah Proyek" untuk memulai.</p>';
+  }
+}
+
+function renderSkills() {
+  const grid = document.getElementById('skillsGrid');
+  const adminGrid = document.getElementById('adminSkillsGrid');
+  document.getElementById('cntSkills').textContent = data.skills.length;
+  
+  const kategoriColors = {
+    'Design': 'from-pink-200 to-rose-200 text-pink-700',
+    'Development': 'from-purple-200 to-indigo-200 text-purple-700',
+    'Tools': 'from-amber-200 to-orange-200 text-amber-700',
+    'Other': 'from-emerald-200 to-teal-200 text-emerald-700'
+  };
+  
+  const skillHTML = (s, admin=false) => {
+    const colorClass = kategoriColors[s.kategori] || kategoriColors['Other'];
+    const isFA = s.ikon && s.ikon.startsWith('fa-');
+    const iconSize = admin ? 'text-sm' : 'text-lg';
+    const boxSize = admin ? 'w-10 h-10 rounded-lg' : 'w-12 h-12 rounded-xl';
+    return `
+      <div class="flex items-center gap-3 mb-3">
+        <div class="${boxSize} bg-gradient-to-br ${colorClass} flex items-center justify-center flex-shrink-0">
+          ${isFA ? `<i class="${s.ikon} ${iconSize}"></i>` : `<span class="${admin?'text-lg':'text-xl'}">${s.ikon}</span>`}
+        </div>
+        <div class="flex-1 min-w-0">
+          <h4 class="font-bold text-sm truncate">${s.nama}</h4>
+          <span class="text-xs text-gray-500">${s.kategori}</span>
+        </div>
+      </div>
+      <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-pink-400 to-purple-400 rounded-full" style="width: ${s.level}%"></div>
+      </div>
+      <div class="text-right text-xs font-semibold text-gray-600 mt-1">${s.level}%</div>
+    `;
+  };
+  
+  grid.innerHTML = data.skills.length ? data.skills.map(s => `
+    <div class="skill-card bg-white rounded-2xl p-5 border border-pink-100">${skillHTML(s)}</div>
+  `).join('') : '<p class="text-gray-500 text-sm col-span-full text-center py-8">Belum ada skills.</p>';
+
+  if (adminGrid) {
+    adminGrid.innerHTML = data.skills.length ? data.skills.map(s => `
+      <div class="bg-white rounded-2xl p-4 border border-pink-100">
+        ${skillHTML(s, true)}
+        <div class="flex gap-2 mt-3">
+          <button onclick="editSkills(${s.id})" class="flex-1 py-1.5 rounded-lg bg-pink-50 text-pink-500 text-xs font-medium hover:bg-pink-100 transition"><i class="fa-solid fa-pen mr-1"></i>Edit</button>
+          <button onclick="deleteSkills(${s.id})" class="flex-1 py-1.5 rounded-lg bg-red-50 text-red-500 text-xs font-medium hover:bg-red-100 transition"><i class="fa-solid fa-trash mr-1"></i>Hapus</button>
+        </div>
+      </div>
+    `).join('') : '<p class="text-gray-500 text-sm col-span-full text-center py-8">Belum ada skills.</p>';
+  }
+}
+
+function renderHobi() {
+  const grid = document.getElementById('hobiGrid');
+  const adminGrid = document.getElementById('adminHobiGrid');
+  document.getElementById('cntHobi').textContent = data.hobi.length;
+  
+  const bg = ['bg-white','bg-pink-50','bg-purple-50','bg-amber-50','bg-emerald-50','bg-sky-50','bg-rose-50','bg-indigo-50'];
+  
+  grid.innerHTML = data.hobi.length ? data.hobi.map((h,i) => `
+    <div class="card ${bg[i%bg.length]} rounded-2xl p-5 border border-pink-100 text-center">
+      <div class="text-4xl mb-2">${h.ikon}</div>
+      <h4 class="font-bold mb-1">${h.nama}</h4>
+      <p class="text-sm text-gray-600">${h.desc}</p>
+    </div>
+  `).join('') : '<p class="text-gray-600 text-sm col-span-full text-center py-8">Belum ada hobi.</p>';
+
+  if (adminGrid) {
+    adminGrid.innerHTML = data.hobi.length ? data.hobi.map((h,i) => `
+      <div class="bg-white rounded-2xl p-4 border border-pink-100">
+        <div class="text-3xl mb-2">${h.ikon}</div>
+        <h4 class="font-bold text-sm mb-1">${h.nama}</h4>
+        <p class="text-xs text-gray-600 mb-3 line-clamp-2">${h.desc}</p>
+        <div class="flex gap-2">
+          <button onclick="editHobi(${h.id})" class="flex-1 py-1.5 rounded-lg bg-pink-50 text-pink-500 text-xs font-medium hover:bg-pink-100 transition"><i class="fa-solid fa-pen mr-1"></i>Edit</button>
+          <button onclick="deleteHobi(${h.id})" class="flex-1 py-1.5 rounded-lg bg-red-50 text-red-500 text-xs font-medium hover:bg-red-100 transition"><i class="fa-solid fa-trash mr-1"></i>Hapus</button>
+        </div>
+      </div>
+    `).join('') : '<p class="text-gray-600 text-sm col-span-full text-center py-8">Belum ada hobi.</p>';
+  }
+}
+
+function renderPesan() {
+  const list = document.getElementById('pesanList');
+  document.getElementById('cntPesan').textContent = data.pesan.length;
+  list.innerHTML = data.pesan.length ? data.pesan.map(p => `
+    <div class="bg-white rounded-2xl p-4 border border-pink-100 flex items-start gap-3">
+      <div class="w-10 h-10 rounded-full btn-primary flex items-center justify-center text-white font-bold flex-shrink-0">${p.nama.charAt(0).toUpperCase()}</div>
+      <div class="flex-1 min-w-0 cursor-pointer" onclick="viewPesan(${p.id})">
+        <div class="flex items-center justify-between gap-2 mb-1">
+          <h4 class="font-bold text-sm truncate">${p.nama}</h4>
+          <span class="text-xs text-gray-400 flex-shrink-0">${new Date(p.tgl).toLocaleDateString('id-ID')}</span>
+        </div>
+        <p class="text-xs text-gray-500 mb-1"><i class="fa-solid fa-envelope mr-1"></i>${p.email}</p>
+        <p class="text-sm text-gray-700 line-clamp-2">${p.pesan}</p>
+      </div>
+      <button onclick="deletePesan(${p.id})" class="text-red-400 hover:text-red-500 text-sm flex-shrink-0"><i class="fa-solid fa-trash"></i></button>
+    </div>
+  `).join('') : '<div class="text-center py-12"><i class="fa-regular fa-envelope-open text-5xl text-gray-300 mb-3"></i><p class="text-gray-500 text-sm">Belum ada pesan masuk.</p></div>';
+}
+
+function loadProfilForm() {
+  document.getElementById('pNama').value = data.profil.nama || '';
+  document.getElementById('pRole').value = data.profil.role || '';
+  document.getElementById('pBio').value = data.profil.bio || '';
+  document.getElementById('pIg').value = data.profil.ig || '';
+  document.getElementById('pLi').value = data.profil.li || '';
+  document.getElementById('pDr').value = data.profil.dr || '';
+  document.getElementById('pGh').value = data.profil.gh || '';
+  document.getElementById('pFotoUrl').value = data.profil.foto || '';
+  const preview = document.getElementById('previewFoto');
+  if (data.profil.foto) preview.src = data.profil.foto;
+}
+
+// ===== LOGIN - FIXED =====
+function openLogin() {
+  const modal = document.getElementById('loginModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  document.getElementById('loginErr').classList.add('hidden');
+  document.getElementById('loginSuccess').classList.add('hidden');
+  document.getElementById('lUser').value = '';
+  document.getElementById('lPass').value = '';
+  setTimeout(() => document.getElementById('lUser').focus(), 100);
+}
+
+function closeLogin() {
+  const modal = document.getElementById('loginModal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+
+function doLogin() {
+  const u = document.getElementById('lUser').value.trim();
+  const p = document.getElementById('lPass').value;
+  const errEl = document.getElementById('loginErr');
+  const successEl = document.getElementById('loginSuccess');
+  
+  errEl.classList.add('hidden');
+  successEl.classList.add('hidden');
+  
+  if (!u || !p) {
+    errEl.classList.remove('hidden');
+    document.getElementById('loginErrMsg').textContent = 'Username dan Password wajib diisi!';
+    errEl.classList.add('shake');
+    setTimeout(() => errEl.classList.remove('shake'), 400);
+    return;
+  }
+  
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    successEl.classList.remove('hidden');
+    setTimeout(() => {
+      isAdmin = true;
+      closeLogin();
+      openDashboard();
+      toast('Login berhasil! Selamat datang admin 🎉');
+    }, 600);
+  } else {
+    errEl.classList.remove('hidden');
+    document.getElementById('loginErrMsg').textContent = 'Username atau Password salah! Coba: kmw / kmw0108';
+    errEl.classList.add('shake');
+    setTimeout(() => errEl.classList.remove('shake'), 400);
+  }
+}
+
+// Attach login handlers
+document.getElementById('btnLogin').addEventListener('click', openLogin);
+document.getElementById('btnSubmitLogin').addEventListener('click', doLogin);
+document.getElementById('btnCancelLogin').addEventListener('click', closeLogin);
+document.getElementById('togglePass').addEventListener('click', function() {
+  const passInput = document.getElementById('lPass');
+  const icon = this.querySelector('i');
+  if (passInput.type === 'password') {
+    passInput.type = 'text';
+    icon.className = 'fa-solid fa-eye-slash';
+  } else {
+    passInput.type = 'password';
+    icon.className = 'fa-solid fa-eye';
+  }
+});
+// Enter key support
+document.getElementById('lPass').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+document.getElementById('lUser').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+
+// ===== DASHBOARD =====
+function openDashboard() {
+  document.getElementById('dashboard').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  renderProyek();
+  renderSkills();
+  renderHobi();
+  renderPesan();
+  loadProfilForm();
+}
+function closeDashboard() {
+  document.getElementById('dashboard').classList.add('hidden');
+  document.body.style.overflow = '';
+  isAdmin = false;
+  renderPublic();
+  renderProyek();
+  renderSkills();
+  renderHobi();
+}
+document.getElementById('btnCloseDashboard').addEventListener('click', closeDashboard);
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  document.getElementById('tab-' + name).classList.remove('hidden');
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('tab-active');
+    if (btn.dataset.tab === name) btn.classList.add('tab-active');
+  });
+}
+
+// ===== PROYEK CRUD =====
+function openProyekModal() {
+  document.getElementById('prId').value = '';
+  document.getElementById('prJudul').value = '';
+  document.getElementById('prIkon').value = '';
+  document.getElementById('prGambar').value = '';
+  document.getElementById('prTag').value = '';
+  document.getElementById('prDesc').value = '';
+  document.getElementById('prLink').value = '';
+  document.getElementById('prFormErr').classList.add('hidden');
+  document.getElementById('prGambarPreview').classList.add('hidden');
+  document.getElementById('proyekModalTitle').textContent = 'Tambah Proyek';
+  const modal = document.getElementById('proyekModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+function closeProyekModal() {
+  const modal = document.getElementById('proyekModal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+function previewProyekImg() {
+  const url = document.getElementById('prGambar').value.trim();
+  if (!url) { toast('Masukkan URL gambar dulu', 'error'); return; }
+  const img = document.getElementById('prGambarImg');
+  img.src = url;
+  img.onload = () => {
+    document.getElementById('prGambarPreview').classList.remove('hidden');
+  };
+  img.onerror = () => {
+    toast('URL gambar tidak valid', 'error');
+    document.getElementById('prGambarPreview').classList.add('hidden');
+  };
+}
+function clearProyekImg() {
+  document.getElementById('prGambar').value = '';
+  document.getElementById('prGambarPreview').classList.add('hidden');
+}
+function editProyek(id) {
+  const p = data.proyek.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('prId').value = p.id;
+  document.getElementById('prJudul').value = p.judul;
+  document.getElementById('prIkon').value = p.ikon || '';
+  document.getElementById('prGambar').value = p.gambar || '';
+  document.getElementById('prTag').value = p.tag;
+  document.getElementById('prDesc').value = p.desc;
+  document.getElementById('prLink').value = p.link || '';
+  document.getElementById('prFormErr').classList.add('hidden');
+  if (p.gambar) {
+    document.getElementById('prGambarImg').src = p.gambar;
+    document.getElementById('prGambarPreview').classList.remove('hidden');
+  } else {
+    document.getElementById('prGambarPreview').classList.add('hidden');
+  }
+  document.getElementById('proyekModalTitle').textContent = 'Edit Proyek';
+  const modal = document.getElementById('proyekModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+function deleteProyek(id) {
+  if (!confirm('Yakin hapus proyek ini?')) return;
+  data.proyek = data.proyek.filter(x => x.id !== id);
+  saveData();
+  renderProyek();
+  toast('Proyek berhasil dihapus');
+}
+function saveProyek() {
+  const judul = document.getElementById('prJudul').value.trim();
+  const ikon = document.getElementById('prIkon').value.trim();
+  const gambar = document.getElementById('prGambar').value.trim();
+  const tag = document.getElementById('prTag').value.trim();
+  const desc = document.getElementById('prDesc').value.trim();
+  const link = document.getElementById('prLink').value.trim();
+  
+  if (!judul || !tag || !desc) {
+    document.getElementById('prFormErr').classList.remove('hidden');
+    return;
+  }
+  
+  const id = document.getElementById('prId').value;
+  const obj = { judul, ikon: ikon || '📁', gambar, tag, desc, link };
+  
+  if (id) {
+    const idx = data.proyek.findIndex(x => x.id == id);
+    if (idx > -1) data.proyek[idx] = { ...data.proyek[idx], ...obj };
+  } else {
+    obj.id = Date.now();
+    data.proyek.push(obj);
+  }
+  saveData();
+  closeProyekModal();
+  renderProyek();
+  toast(id ? 'Proyek diperbarui!' : 'Proyek baru ditambahkan!');
+}
+
+// ===== SKILLS CRUD =====
+function openSkillsModal() {
+  document.getElementById('skId').value = '';
+  document.getElementById('skNama').value = '';
+  document.getElementById('skIkon').value = '';
+  document.getElementById('skKategori').value = 'Design';
+  document.getElementById('skLevel').value = '';
+  document.getElementById('skFormErr').classList.add('hidden');
+  document.getElementById('skillsModalTitle').textContent = 'Tambah Skill';
+  const modal = document.getElementById('skillsModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+function closeSkillsModal() {
+  const modal = document.getElementById('skillsModal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+function editSkills(id) {
+  const s = data.skills.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('skId').value = s.id;
+  document.getElementById('skNama').value = s.nama;
+  document.getElementById('skIkon').value = s.ikon;
+  document.getElementById('skKategori').value = s.kategori;
+  document.getElementById('skLevel').value = s.level;
+  document.getElementById('skFormErr').classList.add('hidden');
+  document.getElementById('skillsModalTitle').textContent = 'Edit Skill';
+  const modal = document.getElementById('skillsModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+function deleteSkills(id) {
+  if (!confirm('Yakin hapus skill ini?')) return;
+  data.skills = data.skills.filter(x => x.id !== id);
+  saveData();
+  renderSkills();
+  toast('Skill dihapus');
+}
+function saveSkills() {
+  const nama = document.getElementById('skNama').value.trim();
+  const ikon = document.getElementById('skIkon').value.trim();
+  const kategori = document.getElementById('skKategori').value;
+  const level = parseInt(document.getElementById('skLevel').value);
+  
+  if (!nama || !ikon || isNaN(level)) {
+    document.getElementById('skFormErr').classList.remove('hidden');
+    return;
+  }
+  
+  const id = document.getElementById('skId').value;
+  const obj = { nama, ikon, kategori, level };
+  
+  if (id) {
+    const idx = data.skills.findIndex(x => x.id == id);
+    if (idx > -1) data.skills[idx] = { ...data.skills[idx], ...obj };
+  } else {
+    obj.id = Date.now();
+    data.skills.push(obj);
+  }
+  saveData();
+  closeSkillsModal();
+  renderSkills();
+  toast(id ? 'Skill diperbarui!' : 'Skill baru ditambahkan!');
+}
+
+// ===== HOBI CRUD =====
+function openHobiModal() {
+  document.getElementById('hbId').value = '';
+  document.getElementById('hbIkon').value = '';
+  document.getElementById('hbNama').value = '';
+  document.getElementById('hbDesc').value = '';
+  document.getElementById('hbFormErr').classList.add('hidden');
+  document.getElementById('hobiModalTitle').textContent = 'Tambah Hobi';
+  const modal = document.getElementById('hobiModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+function closeHobiModal() {
+  const modal = document.getElementById('hobiModal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+function editHobi(id) {
+  const h = data.hobi.find(x => x.id === id);
+  if (!h) return;
+  document.getElementById('hbId').value = h.id;
+  document.getElementById('hbIkon').value = h.ikon;
+  document.getElementById('hbNama').value = h.nama;
+  document.getElementById('hbDesc').value = h.desc;
+  document.getElementById('hbFormErr').classList.add('hidden');
+  document.getElementById('hobiModalTitle').textContent = 'Edit Hobi';
+  const modal = document.getElementById('hobiModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+function deleteHobi(id) {
+  if (!confirm('Yakin hapus hobi ini?')) return;
+  data.hobi = data.hobi.filter(x => x.id !== id);
+  saveData();
+  renderHobi();
+  toast('Hobi dihapus');
+}
+function saveHobi() {
+  const ikon = document.getElementById('hbIkon').value.trim();
+  const nama = document.getElementById('hbNama').value.trim();
+  const desc = document.getElementById('hbDesc').value.trim();
+  
+  if (!ikon || !nama || !desc) {
+    document.getElementById('hbFormErr').classList.remove('hidden');
+    return;
+  }
+  
+  const id = document.getElementById('hbId').value;
+  const obj = { ikon, nama, desc };
+  
+  if (id) {
+    const idx = data.hobi.findIndex(x => x.id == id);
+    if (idx > -1) data.hobi[idx] = { ...data.hobi[idx], ...obj };
+  } else {
+    obj.id = Date.now();
+    data.hobi.push(obj);
+  }
+  saveData();
+  closeHobiModal();
+  renderHobi();
+  toast(id ? 'Hobi diperbarui!' : 'Hobi baru ditambahkan!');
+}
+
+// ===== PROFIL =====
+function applyFotoUrl() {
+  const url = document.getElementById('pFotoUrl').value.trim();
+  if (!url) { toast('Masukkan URL gambar dulu', 'error'); return; }
+  const preview = document.getElementById('previewFoto');
+  const oldSrc = preview.src;
+  preview.src = url;
+  preview.onerror = () => {
+    preview.src = oldSrc;
+    toast('URL gambar tidak valid', 'error');
+  };
+  preview.onload = () => {
+    data.profil.foto = url;
+    saveData();
+    toast('URL foto berhasil diterapkan!');
+  };
+}
+
+function saveProfil() {
+  data.profil.nama = document.getElementById('pNama').value.trim();
+  data.profil.role = document.getElementById('pRole').value.trim();
+  data.profil.bio = document.getElementById('pBio').value.trim();
+  data.profil.ig = document.getElementById('pIg').value.trim();
+  data.profil.li = document.getElementById('pLi').value.trim();
+  data.profil.dr = document.getElementById('pDr').value.trim();
+  data.profil.gh = document.getElementById('pGh').value.trim();
+  saveData();
+  renderPublic();
+  toast('Profil berhasil diperbarui!');
+}
+
+function resetDefault() {
+  if (!confirm('Reset SEMUA data ke default? Semua perubahan akan hilang.')) return;
+  data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  saveData();
+  loadProfilForm();
+  renderPublic();
+  renderProyek();
+  renderSkills();
+  renderHobi();
+  renderPesan();
+  toast('Semua data direset ke default');
+}
+
+// ===== PESAN =====
+function viewPesan(id) {
+  const p = data.pesan.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('pesanDetail').innerHTML = `
+    <div class="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+      <div class="w-12 h-12 rounded-full btn-primary flex items-center justify-center text-white font-bold text-lg">${p.nama.charAt(0).toUpperCase()}</div>
+      <div class="flex-1">
+        <h4 class="font-bold">${p.nama}</h4>
+        <p class="text-xs text-gray-500">${new Date(p.tgl).toLocaleString('id-ID')}</p>
+      </div>
+    </div>
+    <div class="space-y-2 mb-4">
+      <div class="flex items-start gap-2">
+        <i class="fa-solid fa-envelope text-pink-400 mt-1"></i>
+        <div>
+          <div class="text-xs text-gray-500">Email Pengirim</div>
+          <a href="mailto:${p.email}" class="text-sm font-medium text-pink-500 hover:underline">${p.email}</a>
+        </div>
+      </div>
+    </div>
+    <div class="bg-pink-50 rounded-xl p-4">
+      <div class="text-xs text-gray-500 mb-1">Pesan:</div>
+      <p class="text-sm text-gray-700 whitespace-pre-wrap">${p.pesan}</p>
+    </div>
+    <div class="flex gap-2 mt-4">
+      <a href="mailto:${p.email}" class="flex-1 btn-primary py-2.5 rounded-xl text-white text-sm font-medium text-center">
+        <i class="fa-solid fa-reply mr-1"></i> Balas via Email
+      </a>
+      <button onclick="deletePesan(${p.id}); closePesanModal();" class="px-4 py-2.5 rounded-xl bg-red-50 text-red-500 text-sm font-medium hover:bg-red-100 transition">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+    </div>
+  `;
+  const modal = document.getElementById('pesanModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+function closePesanModal() {
+  const modal = document.getElementById('pesanModal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+function deletePesan(id) {
+  if (!confirm('Hapus pesan ini?')) return;
+  data.pesan = data.pesan.filter(x => x.id !== id);
+  saveData();
+  renderPesan();
+  toast('Pesan dihapus');
+}
+function clearAllPesan() {
+  if (!data.pesan.length) { toast('Tidak ada pesan', 'error'); return; }
+  if (!confirm('Hapus SEMUA pesan?')) return;
+  data.pesan = [];
+  saveData();
+  renderPesan();
+  toast('Semua pesan dihapus');
+}
+
+// ===== KONTAK FORM =====
+document.getElementById('kontakForm').addEventListener('submit', e => {
+  e.preventDefault();
+  data.pesan.unshift({
+    id: Date.now(),
+    nama: document.getElementById('kNama').value.trim(),
+    email: document.getElementById('kEmail').value.trim(),
+    pesan: document.getElementById('kPesan').value.trim(),
+    tgl: new Date().toISOString()
+  });
+  saveData();
+  document.getElementById('kontakForm').reset();
+  toast('Pesan berhasil dikirim! Terima kasih 🎉');
+  if (isAdmin) renderPesan();
+});
+
+// ===== TOAST =====
+function toast(msg, type='success') {
+  const t = document.getElementById('toast');
+  const icon = document.getElementById('toastIcon');
+  document.getElementById('toastMsg').textContent = msg;
+  if (type === 'error') {
+    icon.className = 'fa-solid fa-circle-exclamation text-red-500 text-xl';
+    t.className = t.className.replace('border-green-200','border-red-200');
+  } else {
+    icon.className = 'fa-solid fa-circle-check text-green-500 text-xl';
+    t.className = t.className.replace('border-red-200','border-green-200');
+  }
+  t.classList.remove('hidden');
+  t.classList.add('flex');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => {
+    t.classList.add('hidden');
+    t.classList.remove('flex');
+  }, 2800);
+}
+
+// ===== INIT =====
+renderPublic();
+renderProyek();
+renderSkills();
+renderHobi();
+</script>
+</body>
+</html>
